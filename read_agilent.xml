@@ -1,0 +1,32 @@
+<tool id="matrix_agilent" name="matrix_agilent" version="1.0.1">
+  <description>for miccroarray matrix expression</description>
+  <command interpreter="bash">r_wrapper.sh $script_file</command>
+
+  <inputs>
+      <param name="input_files" type="data" format="tabular" label="Dataset matrix"/>
+      <param name="input_samples" type="data" format="tabular" label="Dataset matrix"/>
+  </inputs>
+
+  <configfiles>
+    <configfile name="script_file">
+      ## Setup R error handling to go to stderr
+      options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
+	   ## open MadPro library
+	  library(MadProDev,quietly=TRUE)
+	 ## source("/home/ehirchaud/MadProDev/R/normalisation.R")
+	 ## library(limma,quietly=TRUE)
+    </configfile>
+  </configfiles>
+
+  <outputs>
+    <data format="tabular" name="out_file" value="matNorm.txt" />
+  </outputs>
+
+    <tests>
+        <test>
+        </test>
+    </tests>
+<help>
+
+</help>
+</tool>
