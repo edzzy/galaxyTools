@@ -15,4 +15,4 @@ infile=$1; shift
 test -f $infile || fail "R input file '$infile' does not exist"
 
 # Invoke R passing file named by first argument to stdin
-R --vanilla --slave $* < $infile
+R --vanilla --slave $* < $infile &> log.txt

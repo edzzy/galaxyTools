@@ -12,7 +12,7 @@
     ## Setup R error handling to go to stderr
     options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
 	## open MadPro library
-	library(MadProDev,quietly=TRUE)
+	suppressPackageStartupMessages(library(MadPro,quietly=TRUE,warn.conflicts=FALSE,verbose=FALSE))
 	##source("/home/ehirchaud/MadProDev/R/graph_png.R")
 	mat = read.delim( "${input.file_name}",row.names=1 )
 	print("${boxplot_file.file_name}")
@@ -24,7 +24,7 @@
 
   <outputs>
 	  <data format="html" name="html_file" label="${out_prefix}.html" />
-	  <data format="jpg" name="boxplot_file" label="boxPlot_${out_prefix}.jpg" />
+	  <data format="jpg" name="boxplot_file" label="boxplot_${out_prefix}.jpg" />
   </outputs>
 
     <tests>

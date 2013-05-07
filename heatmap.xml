@@ -1,0 +1,47 @@
+<tool id="heatmap" name="Heatmap" version="1.0.1">
+	<description>For miccroarray matrix expression</description>
+	<command interpreter="bash">r_wrapper.sh $script_file</command>
+
+	<inputs>
+		<param name="input" type="data" format="tabular" label="Dataset matrix"/>
+		<param name="out_prefix"  value="Heatmap" type="text" label="Title for the output file" size ="80" />
+		<param name="log_or_not" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="true" label="Log or not" help="Use this option if your data are already in log.">
+			<option value="Already log">Already log</option>
+		</param>
+		<param name="input_annot" type="data" format="tabular" label="Annotation matrix"/>
+	</inputs>
+
+	<configfiles>
+		<configfile name="script_file">
+			## Setup R error handling to go to stderr
+			options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
+			## open MadPro library
+			library(MadPro,quietly=TRUE)
+			source("/home/tmaroilley/MadProDev/R/graph_png.R")
+			mat = read.delim( "${input.file_name}",row.names=1 )
+			class = read.delim( "${input_annot.file_name}",row.names=1 )
+			class = rbind(t(class)[-1:-2,])
+			if(is.null(dim(class))){
+				class = as.data.frame(class)
+			}
+			create_heatmap(data=mat,output_name="${heatmap_file.file_name}",path="",log=$log_or_not,class=class) 
+			HTML_img("${heatmap_file.file_name}","${html_file}")
+		</configfile>
+	</configfiles>
+
+	<outputs>
+		<data format="html" name="html_file" label="${out_prefix}.html" />
+		<data format="jpg" name="heatmap_file" label="heatmap_${out_prefix}.jpg" />
+	</outputs>
+
+	<tests>
+		<test>
+		</test>
+	</tests>
+
+	<help>
+	This tool creates a heatmap of the correlation between the samples.
+	</help>
+
+</tool>
+
