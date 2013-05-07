@@ -25,7 +25,7 @@
 				class = as.data.frame(class)
 			}
 			create_heatmap(data=mat,output_name="${heatmap_file.file_name}",path="",log=$log_or_not,class=class) 
-			HTML_img("${heatmap_file.file_name}","${html_file}")
+			HTML_img("${heatmap_file.file_name}","${html_file.file_name}")
 		</configfile>
 	</configfiles>
 
