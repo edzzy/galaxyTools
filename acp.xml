@@ -1,0 +1,61 @@
+<tool id="ACP" name="ACP" version="1.0.1">
+  <description>for miccroarray matrix expression</description>
+  <command interpreter="bash">r_wrapper.sh $script_file</command>
+
+  <inputs>
+      <param name="input" type="data" format="tabular" label="Dataset matrix"/>
+	  <param name="out_prefix"  value="acp" type="text" label="Title for the output file" size ="80"/>
+	  <!--<param name="input_annot" type="data" format="tabular" label="Annotation matrix"/>-->
+	  <param name="log_or_not" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="true" label="Log or not" help="Use this option if your data are already in log.">
+		  <option value="Already log">Already log</option>
+	  </param>
+	  <!--	  <param name="nf" type="select"  label="nf : number of axes">
+		  <option value="2">2</option>
+		  <option value="3">3</option>
+	  </param>-->
+  </inputs>
+
+  <configfiles>
+    <configfile name="script_file">
+    ## Setup R error handling to go to stderr
+    options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
+	## open MadPro library
+	library(MadPro,quietly=TRUE)
+	source("/home/tmaroilley/MadProDev/R/graph_png.R")
+	mat = read.delim( "${input.file_name}",row.names=1 )
+	##class = read.delim( "${input_annot.file_name}",row.names=1 )
+	##class = rbind(t(class)[-1:-2,])
+	##if(is.null(dim(class))){
+	##	class = as.data.frame(class)
+	##}
+	create_acp(data=mat,output_name="acp.jpg",path="",log=$log_or_not)
+	file_origine = paste("1_2_","acp.jpg",sep="")
+	file_new = "${acp1_file.file_name}"
+	file.rename(file_origine,file_new)
+	cat(file_new,file="${log.file_name}")
+	 cat(file_origine,file="${log.file_name}",append=TRUE)
+
+	##create_acp(data=mat,output_name="acp.jpg",path="",nf=$nf,log=$log_or_not,class=class)
+	##HTML_img("${acp_file.file_name}","${html_file}")
+    </configfile>
+  </configfiles>
+
+  <outputs>
+	  <data format="jpg" name="acp1_file" label="1_2_${out_prefix}.jpg" from_work_dir="1_2_acp.jpg" />
+	  <data format="text" name="log" label="log" />
+	  <!--<data format="jpg" name="acp_file2" label="acp_2_3_${out_prefix}.jpg" />
+	  <data format="jpg" name="acp_file3" label="acp_1_3_${out_prefix}.jpg" />-->
+	<!-- <data format="svg" name="svg_file" label="svg_1_2_${out_prefix}.svg" />-->
+	  <!--<data format="svg" name="svg_file2" label="svg_1_3_${out_prefix}.svg" />
+	  <data format="svg" name="svg_file3" label="svg_2_3_${out_prefix}.svg" />-->
+	  <!--<data format="html" name="html_file" label="${out_prefix}.html" />-->
+  </outputs>
+
+    <tests>
+        <test>
+        </test>
+    </tests>
+<help>
+
+</help>
+</tool>
