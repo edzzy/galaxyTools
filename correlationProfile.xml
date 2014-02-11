@@ -1,10 +1,10 @@
-<tool id="boxplot" name="Boxplot" version="1.0.1">
+<tool id="corpmedian" name="Correlation Median" version="1.0.1">
   <description>for miccroarray matrix expression</description>
   <command interpreter="bash">r_wrapper.sh $script_file</command>
 
   <inputs>
       <param name="input" type="data" format="tabular" label="Dataset matrix"/>
-	  <param name="out_prefix"  value="Boxplot" type="text" label="Title for the output file" size ="80" />
+	  <param name="out_prefix"  value="Correlation" type="text" label="Title for the output file" size ="80" />
   </inputs>
 
   <configfiles>
@@ -15,18 +15,12 @@
 ##	suppressPackageStartupMessages(library(MadPro,quietly=TRUE,warn.conflicts=FALSE,verbose=FALSE))
 	source("/home/ehirchaud/MadProDev/R/graph_png.R")
 	mat = read.delim( "${input.file_name}",row.names=1 )
-	print("${boxplot_file.file_name}")
-	print("${boxplot_file.ext}")
-	create_boxplot(mat,"${boxplot_file.file_name}")	
-	boxfiles = paste(getwd(),"/boxplot.jpg")
-	create_boxplot(mat,boxfiles)	
-	HTML_img(boxfiles,"${html_file}")
+	create_correlation_median(mat,"${correlation_file.file_name}")	
     </configfile>
   </configfiles>
 
   <outputs>
-	  <data format="html" name="html_file" label="${out_prefix}.html" />
-	  <data format="jpg" name="boxplot_file" label="boxplot_${out_prefix}.jpg" />
+	  <data format="jpg" name="correlation_file" label="boxplot_${out_prefix}.jpg" />
   </outputs>
 
     <tests>
@@ -37,3 +31,4 @@
 
 </help>
 </tool>
+

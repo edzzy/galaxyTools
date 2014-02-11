@@ -1,24 +1,37 @@
-<tool id="matrix_agilent" name="matrix_agilent" version="1.0.1">
+<tool id="read_affymetrix" name="read_affymetrix" version="1.0.1">
   <description>for miccroarray matrix expression</description>
   <command interpreter="bash">r_wrapper.sh $script_file</command>
 
   <inputs>
       <param name="input_project" type="text" label="Project name"/>
       <param name="input_samples" type="data" format="tabular" label="Samples"/>
+      <param name="input_target" type="select" label="Target">
+	<option value="probeset"> Exon </option>
+	<option value="core"> Gene </option>
+      </param>
+      <param name="input_normalize" type="select" label="Target">
+	<option value="FALSE"> None </option>
+	<option value="TRUE"> RMA </option>
+      </param>
   </inputs>
 
   <configfiles>
     <configfile name="script_file">
     ## Setup R error handling to go to stderr
-    options( show.error.messages=T,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
+    options( show.error.messages= T, error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
 	## open MadPro library
-	library(limma,quietly=TRUE)
+##	library(limma,quietly=TRUE)
+	library(oligo)
 	source("/home/galaxy/galaxy-dist/tools/madPro/read.file.R")
+
 	pData = read.delim("${input_samples.file_name}", header = TRUE, row.names = 1, sep = "\t")
-	namesFiles = pData[,which(colnames(pData) == "nomFichiers")]
 	pathDir = paste("/data2/dataExpression/RawData/" , "${input_project}", "/", sep="")
-	dataMA = read_Array( pData = pData, type = "AG", Flag = FALSE, pathDir = pathDir, rmCtrl = TRUE)
-	write.table(dataMA, "${out_file.file_name}", row.names = TRUE, col.names = NA, quote = FALSE, sep="\t") 
+	namesFiles = pData[,which(colnames(pData) == "nomFichiers")]
+	rawData = read.celfiles(paste(pathDir,"/", namesFiles, sep = ""))
+
+	esetRaw = oligo::rma(rawData, target = "${input_target}" , normalize = ${input_normalize})
+
+	write.table(exprs(esetRaw), "${out_file.file_name}", row.names = TRUE, col.names = NA, quote = FALSE, sep="\t") 
     </configfile>
   </configfiles>
 

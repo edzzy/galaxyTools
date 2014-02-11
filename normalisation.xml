@@ -15,8 +15,8 @@
       ## Setup R error handling to go to stderr
       options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
 	   ## open MadPro library
-	  library(MadProDev,quietly=TRUE)
-	 ## source("/home/ehirchaud/MadProDev/R/normalisation.R")
+	 # library(MadProDev,quietly=TRUE)
+	 source("/home/ehirchaud/MadProDev/R/normalisation.R")
 	 ## library(limma,quietly=TRUE)
         mat = read.delim( "${input.file_name}",row.names=1 )
 		
