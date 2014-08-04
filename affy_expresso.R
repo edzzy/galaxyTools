@@ -1,5 +1,5 @@
 
-options( show.error.messages=FALSE,echo=FALSE, verbose = FALSE, warn = -1  )
+options( show.error.messages=FALSE,echo=FALSE, verbose = TRUE, warn = -1  )
 ##Script########
 #library(parallel, verbose = FALSE, quietly = TRUE, warn.conflicts = FALSE)
 #library(methods, verbose = FALSE, quietly = TRUE, warn.conflicts = FALSE)
@@ -24,9 +24,16 @@ files <- unlist(strsplit(files, " "))
 filesnames <- files[seq(1,length(files), 2)]
 filesCEL <- files[seq(2,length(files), 2)]
 
+dataFiles <- cbind(filesnames, filesCEL)
+
+
 ptm <- proc.time()
 pData <- read.delim(i_samples, header=TRUE, stringsAsFactor= FALSE)
-Data <- suppressMessages(ReadAffy(filenames=filesnames, sampleNames=as.character(pData$NameID)))
+
+pData <- merge(pData,dataFiles, by.x="fileName",by.y="filesCEL")
+
+print(pData)
+Data <- suppressMessages(ReadAffy(filenames=as.character(pData$filesnames), sampleNames=as.character(pData$NameID)))
 eset <- suppressMessages(expresso(Data, bgcorrect.method = bgcorrect, normalize.method = normalize, pmcorrect.method = pmcorrect, summary.method = summary, verbose=FALSE))
 #eset <- suppressMessages(rma(Data,verbose = FALSE))
 mat <- exprs(eset)
