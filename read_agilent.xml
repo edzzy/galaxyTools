@@ -1,29 +1,25 @@
-<tool id="matrix_agilent" name="matrix_agilent" version="1.0.1">
-  <description>for miccroarray matrix expression</description>
-  <command interpreter="bash">r_wrapper.sh $script_file</command>
+<tool id="matrix_agilent" name="Import Agilent files" version="1.0.1">
+  <description>:  read  Agilent miccroarray files</description>
+  <command interpreter="Rscript"> read.file.R $input_samples.file_name $input_colSignal $remove_control $out_file
+  	#for $i, $input_file in enumerate($input_files):
+		${input_file} ${input_file.name} 
+	#end for
+
+  </command>
 
   <inputs>
-      <param name="input_project" type="text" label="Project name"/>
+      <param name="input_colSignal" type="select" label="Signal Column">
+	<option value="MedianSignal">MedianSignal</option>
+	<option value="MeanSignal">MeanSignal</option>
+      </param>
       <param name="input_samples" type="data" format="tabular" label="Samples"/>
+      <param name="input_files" type ="data" format="text" multiple="true" />
+      <param name="remove_control" type ="boolean" label="Remove control"/>
   </inputs>
 
-  <configfiles>
-    <configfile name="script_file">
-    ## Setup R error handling to go to stderr
-    options( show.error.messages=T,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
-	## open MadPro library
-	library(limma,quietly=TRUE)
-	source("/home/galaxy/galaxy-dist/tools/madPro/read.file.R")
-	pData = read.delim("${input_samples.file_name}", header = TRUE, row.names = 1, sep = "\t")
-	namesFiles = pData[,which(colnames(pData) == "nomFichiers")]
-	pathDir = paste("/data2/dataExpression/RawData/" , "${input_project}", "/", sep="")
-	dataMA = read_Array( pData = pData, type = "AG", Flag = FALSE, pathDir = pathDir, rmCtrl = TRUE)
-	write.table(dataMA, "${out_file.file_name}", row.names = TRUE, col.names = NA, quote = FALSE, sep="\t") 
-    </configfile>
-  </configfiles>
 
   <outputs>
-    <data format="tabular" name="out_file" value="Matrice expression" type="data" />
+    <data format="tabular" name="out_file" value="Matriceexpression" type="data" label="Matrix with ${input_colSignal}"/>
   </outputs>
 
     <tests>
@@ -31,6 +27,32 @@
         </test>
     </tests>
 <help>
+This tool read output from *Feature Extraction* software.
+
+
+* **Signal column** : which column is used to create matrix expression
+* **Samples** : text file contains samples information
+
+Example:: 
+
+	NameID	nameFile	Dye	Parameter
+	A	A.txt		cy3	wt
+	B	A.txt		cy5	mut
+
+	
+-----
+
+**Mandatory Columns**
+
+- NameID : name of your samples must be unique
+- nameFile : name of file corresponding to the sample
+
+**Option Columns**
+
+- Dye : if you use bicolor array  must be cy3 or cy5 (case not matter, cy3 green chanel and cy5 red chanel)
+- Any other columns for biolofical or technical conditions
+
+* remove control : remove probes controls 
 
 </help>
 </tool>

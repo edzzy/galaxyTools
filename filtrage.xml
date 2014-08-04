@@ -1,52 +1,32 @@
 <tool id="filtrage_classe" name="Filtrage" version="1.0.1">
   <description>for miccroarray matrix expression</description>
-  <command interpreter="bash">r_wrapper.sh $script_file</command>
+  <command interpreter="Rscript">filtrage.r ${input_samples.file_name} ${parameter.input_parameter.value} ${input_matrix.file_name} ${input_pourcent.value} ${out_file.file_name} ${out_img.file_name} ${logged_transformed.value}
+  
+  </command>
 
   <inputs>
-      <param name="input_samples" type="data" format="tabular" label="Samples"/>
-      <param name="input_parameter" type="text" label="Parameter name"/>
-      <param name ="input_matrix" type="data" label="Expression matrix" />
+     <param name ="input_matrix" type="data" label="Expression matrix:" />
+    <param name = "input_samples" type="data" format="tabular" label="Samples:"/>
+    <param name ="logged_transformed" type="boolean" label="Log transform data:" />
+    <conditional name="parameter">
+      	<param name = "parameter_select" type="select" label="Type Parameter:">
+		<option value="classes"> Classes </option>
+		<option value="global"> globale </option>
+      	</param>
+      	<when value = "classes">
+		<param name = "input_parameter" type="text" label="Parameter name"/>
+      	</when>
+      	<when value = "global">
+		<param name = "input_parameter" type="text" label="Parameter name" value ="global"/>
+      	</when>
+    </conditional>
+      <param name ="input_pourcent" type="integer" label="Pourcent" value="50"/>
   </inputs>
 
-  <configfiles>
-    <configfile name="script_file">
-    ## Setup R error handling to go to stderr
-   # options( show.error.messages=T,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
-	## open MadPro library
-	library(limma,quietly=TRUE)
-	library(genefilter,quietly=TRUE)
-	pData = read.delim("${input_samples.file_name}", header = TRUE, row.names = 1, sep = "\t")
-	matrix = read.delim("${input_matrix.file_name}", header = TRUE, row.names = 1, sep = "\t")
-	factors = pData[,which(colnames(pData) == "${input_parameter}")]
-	factors = as.factor(unlist(factors))
-	seuil = mean(apply(matrix, 2, median))
-	n = 50/100
-
-	classes.matrix = list()
-
-	for(i in 1:nlevels(factors)){
-		classes.matrix = c(classes.matrix, list(matrix[, which(factors == levels(factors)[i])]))
-	}
-
-	names(classes.matrix) = levels(factors)
-
-	current_filter = rep(FALSE, dim(classes.matrix[[1]])[1])
-	
-
-	for(i in 1:nlevels(factors)){
-		filtre = kOverA(dim(classes.matrix[[i]])[2]*n, seuil)
-     		result_filter = genefilter(classes.matrix[[i]],filtre)
-     		current_filter= result_filter | current_filter
-	}
-
-	matrix = matrix[which(current_filter != FALSE), ]
-
-	write.table(matrix, "${out_file.file_name}", row.names = TRUE, col.names = NA, quote = FALSE, sep="\t") 
-    </configfile>
-  </configfiles>
 
   <outputs>
     <data format="tabular" name="out_file" value="Matrice expression" type="data" />
+    <data format="png" name="out_img" value="density plot" type="data" />
   </outputs>
 
     <tests>

@@ -1,0 +1,41 @@
+<tool id="limma" name="LIMMA" version="1.0.1">
+  <description>for miccroarray matrix expression</description>
+  <command interpreter="Rscript">limmaGeneDiff.R -f ${i_file.file_name} -s ${i_sample.file_name} -o ${out_all.file_name} -p ${out_selected.file_name} -i ${out_img.file_name} -1 ${factor1.value} -2 ${factor2.value} -a ${attribut.value} -m ${methodadjust.value}  -t ${threshold.value} 
+    	#if $log:
+		-l
+	#end if
+  </command>
+
+  <inputs>
+      	<param name = "i_file" type="data" format="tabular" label="Dataset matrix"/>
+      	<param name = "i_sample" type="data" format="tabular" label="Dataset sample"/>
+	<param name = "log" type="boolean" label="log transform data"/>
+
+	<param name = "methodadjust"  type="select" label="Multitesting correct method"  value="BH">
+	  	<option value="BH">Benjamini Hocheberg</option>
+	  	<option value="BF">Bonferoni</option>
+	</param>
+
+	<param name = "factor1" type="text" label="Factor 1" />
+	<param name = "factor2" type ="text" label="Factor 2" />
+	<param name = "attribut" type = "text" label ="Attribut" />
+
+      <param name ="threshold" type="float" label="Cut off Pvalue" value="0.05"/>
+  </inputs>
+
+		
+
+  <outputs>
+    <data format="tabular" name="out_all" value="genediffAll.txt" />
+    <data format="tabular" name="out_selected" value="genediffSelected.txt" />
+    <data format="png" name="out_img" value="volcanoplot" />
+  </outputs>
+
+    <tests>
+        <test>
+        </test>
+    </tests>
+<help>
+
+</help>
+</tool>

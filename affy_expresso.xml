@@ -1,0 +1,55 @@
+<tool id="affy_expression" name="Import Affymetrix files" version="1.0.1">
+  <description>: read and normalize Affymetrix microarray (CEL files)</description>
+  <command interpreter="Rscript">affy_expresso.R  $input_samples  $normalize  $bgcorrect  $pmcorrect  $summary  $out_file
+	#for $i, $input_file in enumerate($input_files):
+		${input_file} ${input_file.name} 
+	#end for 
+  </command>
+
+  <inputs>
+      <param name="input_files" type="data" label="CEL files : " multiple = "true"/>
+      <param name="input_samples" type="data" format="tabular" label="Samples"/>
+      <param name="normalize" type="select" label="Normalize method" value="quantiles">
+	<option value="constant"> Constant </option>
+	<option value="constrasts"> Contrasts </option>
+	<option value="invariantset"> Invariant Set </option>
+	<option value="loess"> Loess </option>
+	<option value="methods"> methods </option>
+	<option value="qspline"> QSpline </option>
+	<option value="quantiles"> Quantiles </option>
+	<option value="quantiles.robust"> Quantiles Robust </option>
+      </param>
+      <param name="bgcorrect" type="select" label="Background correction method" value="rma">
+	<option value="rma"> RMA </option>
+	<option value="bg.correct"> BG correct </option>
+	<option value="mas"> MAS </option>
+	<option value="none"> none </option>
+      </param>
+      <param name="pmcorrect" type="select" label="Perfect match method" value="pmonly">
+	<option value="mas">MAS</option>
+	<option value="methods">Methods</option>
+	<option value="pmonly">pmonly</option>
+	<option value="subtractumm">Subtractmm</option>
+      </param>
+      <param name="summary" type="select" label="Summary method" value="medianpolish">
+	<option value="avgdiff"> Avgdiff </option>
+	<option value="liwong"> Liwong </option>
+	<option value="mas"> MAS </option>
+	<option value="medianpolish"> Median polish </option>
+	<option value="playerout"> Playerout </option>
+      </param>
+  </inputs>
+
+
+  <outputs>
+    <data format="tabular" name="out_file" value="Matrice" type="data" label="Matrix affymetrix with ${normalize} norm" />
+  </outputs>
+
+    <tests>
+        <test>
+        </test>
+    </tests>
+<help>
+
+</help>
+</tool>

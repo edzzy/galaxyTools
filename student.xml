@@ -1,0 +1,36 @@
+<tool id="student_classe" name="Student" version="1.0.1">
+  <description>for miccroarray matrix expression</description>
+  <command interpreter="Rscript">student.R -s ${input_samples.file_name} -1 ${factor1.value} -2 ${factor2.value} -f ${input_matrix.file_name} -o ${out_file_all.file_name} -p  ${out_file_selected.file_name}  -a ${adjust.value} -t ${threshold.value}
+    	#if $log == "true"
+    		-l
+	#end if
+  
+  </command>
+
+  <inputs>
+     	<param name ="input_matrix" type="data" format="tabular" label="Expression matrix:" />
+    	<param name = "input_samples" type="data" format="tabular" label="Samples:"/>
+    	<param name ="log" type="boolean" label="Log transform data:" default="true"/>
+
+    	<param name = "adjust" type="select" label="Type Parameter:">
+		<option value="BH"> Benjamini  Hochberg </option>
+		<option value="bonferroni"> Bonferroni </option>
+		<option value="none"> None </option>
+	</param>
+
+	<param name = "factor1" type="text" label="Condition 1"/>
+	<param name = "factor2" type="text" label="Condition 2"/>
+
+      <param name ="threshold" type="float" label="Cut off Pvalue" value="0.05"/>
+  </inputs>
+
+
+  <outputs>
+    <data format="tabular" name="out_file_all" value="All Pvalue" type="data" />
+    <data format="tabular" name="out_file_selected" value="Selected Pvalue by correction" type="data" />
+  </outputs>
+
+<help>
+
+</help>
+</tool>

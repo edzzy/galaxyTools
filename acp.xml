@@ -1,43 +1,21 @@
 <tool id="ACP" name="ACP" version="1.0.1">
   <description>for miccroarray matrix expression</description>
-  <command interpreter="bash">r_wrapper.sh $script_file</command>
+  <command interpreter="Rscript">acp.r ${input_matrix.file_name} ${input_sample.file_name} ${input_parameter.value} ${log.value} ${acpfile1.file_name} </command>
 
   <inputs>
-      <param name="input" type="data" format="tabular" label="Dataset matrix"/>
-	  <param name="out_prefix"  value="acp" type="text" label="Title for the output file" size ="80"/>
-	  <!--<param name="input_annot" type="data" format="tabular" label="Annotation matrix"/>-->
-	  <param name="log" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="false" label="Log or not" help="Use this option if your data are already in log." />
+      <param name="input_matrix" type="data" format="tabular" label="Dataset matrix"/>
+      <param name="input_sample" type="data" format="tabular" label="Samples"/>
+      <param name="input_parameter" type ="text" label="Paremeter" />
+  <param name="log" type="boolean" truevalue="TRUE" falsevalue="FALSE" checked="false" label="Log transformed data" help="Use this option if your data areinot already in log." />
 	  <!--	  <param name="nf" type="select"  label="nf : number of axes">
 		  <option value="2">2</option>
 		  <option value="3">3</option>
 	  </param>-->
   </inputs>
 
-  <configfiles>
-    <configfile name="script_file">
-    ## Setup R error handling to go to stderr
-    options( show.error.messages=F,error = function () { cat( geterrmessage(), file=stderr() ); q( "no", 1, F ) } )
-	## open MadPro library
-	library(ade4,quietly=TRUE)
-	source("/home/ehirchaud/MadProDev/R/graph_png.R")
-	path = "${acpfile1.files_path}"
-	mat = read.delim( "${input.file_name}",row.names=1 )
-	if("${log}" == FALSE){
-		mat = log2(mat)
-	}
-	acp = dudi.pca(t(mat),scannf=FALSE,nf=2)
-	width = 1000
-	height = 1000
-	quality =100
-	bg_color ="white"
-	jpg(filename = "${acpfile1.file_name}", width = width, height = height, quality = quality, bg = bg_color, res = NA)
-	plot(as.data.frame(acp[which(names(acp)=="li")])[,1], as.data.frame(acp[which(names(acp)=="li")])[,2], pch = 19)
-	devname = dev.off()
-    </configfile>
-  </configfiles>
 
   <outputs>
-	  <data format="jpg" name="acpfile1" label="1_2_${out_prefix}.jpg"  />
+    <data format="png" name="acpfile1" label="acp img"  />
   </outputs>
 
     <tests>
